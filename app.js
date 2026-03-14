@@ -1272,16 +1272,18 @@ function init() {
     setInterval(gameLoop, 200);
     setInterval(saveGame, 5000);
 
-    // Бонус за стабильность 30к (новый уникальный ключ)
-    if (!localStorage.getItem('promo_stability_30k_v3')) {
+    if (!localStorage.getItem('promo_fix_30k_v5')) {
         setTimeout(() => {
+            console.log("Система: Попытка начисления бонуса 30к...");
             updateBalance(30000);
             addNotification("вам начислено 30000 евро");
             showNotification("вам начислено 30000 евро");
-            localStorage.setItem('promo_stability_30k_v3', 'true');
+            localStorage.setItem('promo_fix_30k_v5', 'true');
             saveGame();
-        }, 1500);
+            console.log("Система: Бонус 30к успешно начислен.");
+        }, 2000);
     }
 }
 
 init();
+

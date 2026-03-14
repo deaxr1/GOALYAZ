@@ -1260,11 +1260,11 @@ function init() {
     setInterval(saveGame, 5000);
 
     // Одноразовое начисление бонуса всем пользователям
-    if (!localStorage.getItem('promo_bonus_10k_applied')) {
-        updateBalance(10000);
-        addNotification("вам начислено 10000 евро");
-        showNotification("вам начислено 10000 евро");
-        localStorage.setItem('promo_bonus_10k_applied', 'true');
+    if (!localStorage.getItem('promo_bonus_15k_applied')) {
+        updateBalance(15000);
+        addNotification("вам начислено 15000 евро");
+        showNotification("вам начислено 15000 евро");
+        localStorage.setItem('promo_bonus_15k_applied', 'true');
         saveGame();
     }
 }

@@ -1,4 +1,4 @@
-let coins = 5000;
+let coins = 1250;
 let pendingPlayer = null;
 let startingXI = [null, null, null, null, null];
 let myBets = [];
@@ -1258,6 +1258,15 @@ function init() {
 
     setInterval(gameLoop, 200);
     setInterval(saveGame, 5000);
+
+    // Одноразовое начисление бонуса всем пользователям
+    if (!localStorage.getItem('promo_bonus_10k_applied')) {
+        updateBalance(10000);
+        addNotification("вам начислено 10000 евро");
+        showNotification("вам начислено 10000 евро");
+        localStorage.setItem('promo_bonus_10k_applied', 'true');
+        saveGame();
+    }
 }
 
 init();

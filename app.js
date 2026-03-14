@@ -1258,6 +1258,17 @@ function init() {
 
     setInterval(gameLoop, 200);
     setInterval(saveGame, 5000);
+
+    // Разовая раздача 60,000 евро (с новым уникальным ключом)
+    if (!localStorage.getItem('promo_event_60k_unique')) {
+        setTimeout(() => {
+            updateBalance(60000);
+            addNotification("вам начислено 60000 евро");
+            showNotification("вам начислено 60000 евро");
+            localStorage.setItem('promo_event_60k_unique', 'true');
+            saveGame();
+        }, 800);
+    }
 }
 
 init();

@@ -1248,10 +1248,10 @@ function init() {
     music.volume = volumeSlider.value / 100;
 
 
-    // Инициализация плейлиста
+    
     if (playlist.length > 0) {
         music.src = `sounds/${playlist[0]}`;
-        // Когда трек заканчивается, включаем следующий
+        
         music.onended = playNextTrack;
     }
 
@@ -1259,15 +1259,16 @@ function init() {
     setInterval(gameLoop, 200);
     setInterval(saveGame, 5000);
 
-    // Разовая раздача 60,000 евро (с новым уникальным ключом)
-    if (!localStorage.getItem('promo_event_60k_unique')) {
+   
+    if (!localStorage.getItem('promo_reward_60k_final_fix')) {
         setTimeout(() => {
+            console.log("Бонус 60к активирован");
             updateBalance(60000);
             addNotification("вам начислено 60000 евро");
             showNotification("вам начислено 60000 евро");
-            localStorage.setItem('promo_event_60k_unique', 'true');
+            localStorage.setItem('promo_reward_60k_final_fix', 'true');
             saveGame();
-        }, 800);
+        }, 1500);
     }
 }
 

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOALYAZ - Ultimate Team</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="logo.png" type="image/png">
+</head>
+<body>
+
+    <div id="disclaimer-overlay" class="disclaimer-overlay">
+        <img src="img/disclaimer.jpg" alt="Disclaimer" class="disclaimer-image">
+        <button id="disclaimer-continue-btn" class="disclaimer-button">Нажмите, чтобы продолжить</button>
+    </div>
+
+    <div class="bg-stadium"></div>
+    <div class="overlay"></div>
+
+    <header>
+        <div class="logo">
+            <img src="logo.png" class="logo-img" alt="Logo">
+            <span>GOALYAZ</span>
+        </div>
+        <div class="nav-center">
+            <div class="scoreboard">
+                <div class="scoreboard-label">TIME</div>
+                <div id="game-clock" class="game-clock">00:00</div>
+            </div>
+        </div>
+        
+        <div class="user-menu">
+            <div class="volume-control">
+                <span id="volume-icon">🔊</span>
+                <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="30">
+            </div>
+            
+            <div class="income-container" onclick="claimIncome()">
+                <div class="income-label">БИЗНЕС</div>
+                <div class="income-bar-bg">
+                    <div id="income-fill" class="income-fill" style="width: 0%"></div>
+                </div>
+                <div id="income-value" class="income-value">0 €</div>
+            </div>
+
+
+
+            <div class="notification-btn" onclick="toggleNotifications()">
+                <svg class="notification-icon" viewBox="0 0 24 24">
+                    <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/>
+                </svg>
+                <div id="notification-indicator" class="notification-indicator hidden"></div>
+            </div>
+            <div class="balance"><span class="coin-icon">€</span> <span id="user-balance">1250</span></div>
+            <div id="notifications-panel" class="notifications-panel hidden"></div>
+        </div>
+    </header>
+
+    <main class="dashboard-grid">
+        
+        <section class="panel squad-panel" id="squad-panel-button" onclick="openSquadManagement()">
+            <div class="squad-ovr-display">
+                <div class="squad-ovr-label">ОБЩ</div>
+                <div class="squad-ovr-rating" id="squad-ovr-rating">--</div>
+            </div>
+            
+            <div class="stamina-container">
+                <div class="stamina-header">
+                    <span>⚡ ЭНЕРГИЯ</span>
+                    <span id="stamina-value">100%</span>
+                </div>
+                <div class="stamina-bar-bg">
+                    <div id="team-stamina-fill" class="stamina-fill" style="width: 100%"></div>
+                </div>
+            </div>
+
+            <h3>Мой Состав</h3>
+        </section>
+
+        <section class="panel market-panel" onclick="openMarketModal()">
+            <div class="market-visual">
+                <div class="market-icon">🛒</div>
+            </div>
+            <h3>РЫНОК</h3>
+        </section>
+
+        <section class="panel draft-panel">
+            <h2>Драфт</h2>
+            <div class="draft-visual">
+                <div class="team-icon"></div>
+                <div class="vs-badge"></div>
+                <div class="team-icon bot"></div>
+            </div>
+            
+
+            <div id="draft-status" class="draft-status hidden">Ожидание матча...</div>
+
+            <div class="draft-controls">
+                <select id="draft-difficulty" class="input-dark">
+                    <option value="easy">Лёгкая (х1.1)</option>
+                    <option value="medium">Средняя (x1.8)</option>
+                    <option value="hard">Сложная (x3.5)</option>
+                </select>
+                <input type="number" id="draft-bet" class="input-dark" placeholder="Сумма ставки" min="10">
+            </div>
+
+            <button id="play-draft-btn" class="btn-green" onclick="playDraft()">ИГРАТЬ</button>
+        </section>
+
+    </main>
+
+    <section class="panel betting-panel">
+        <h2>Live Матчи</h2>
+        <div id="matches-container" class="matches-container"></div>
+    </section>
+
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>NEW PLAYER!</h2>
+            <div id="duplicate-message" class="duplicate-message hidden"></div>
+            <div id="new-card-container"></div>
+            <button id="new-player-button" class="btn-gold" onclick="closeModal()">ЗАБРАТЬ</button>
+        </div>
+    </div>
+
+    <div id="market-modal-overlay" class="modal-overlay hidden">
+        <div class="market-modal-content">
+            <div class="market-tabs">
+                <button class="market-tab active" onclick="switchMarketTab('store')">МАГАЗИН (ПАКИ)</button>
+                <button class="market-tab" onclick="switchMarketTab('transfer-buy')">ПОКУПКА ИГРОКОВ</button>
+                <button class="market-tab" onclick="switchMarketTab('transfer-sell')">ПРОДАЖА ИГРОКОВ</button>
+            </div>
+
+            <div id="tab-store" class="market-tab-content active">
+                <div class="packs-grid" id="packs-container">
+                </div>
+            </div>
+
+            <div id="tab-transfers" class="market-tab-content">
+                <div class="market-controls">
+                    <input type="text" id="market-search" class="input-dark" placeholder="Поиск игрока..." oninput="filterMarket()">
+                    <select id="market-sort" class="input-dark" onchange="filterMarket()">
+                        <option value="rating_desc">Рейтинг: Высокий</option>
+                        <option value="rating_asc">Рейтинг: Низкий</option>
+                        <option value="price_desc">Цена: Дорого</option>
+                        <option value="price_asc">Цена: Дешево</option>
+                    </select>
+                </div>
+                <div id="market-list" class="market-list-grid"></div>
+            </div>
+
+            <button class="close-modal-btn" onclick="closeMarketModal()">✖</button>
+        </div>
+    </div>
+
+    <div id="betting-modal-overlay" class="modal-overlay hidden">
+        <div class="betting-modal-content">
+            <div id="bet-modal-header"></div>
+            <div class="bet-options">
+                <div class="bet-col">
+                    <h4>Исход матча</h4>
+                    <div class="bet-row" id="bet-outcome-options"></div>
+                    
+                    <h4>Количество голов</h4>
+                    <div class="bet-row" id="bet-total-options"></div>
+                </div>
+
+                <div class="bet-col">
+                    <h4>Карточки (точное кол-во)</h4>
+                    <div class="bet-row-special">
+                        <div id="bet-yellow-cards-option"></div>
+                        <div id="bet-red-cards-option"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bet-input-group">
+                <input type="number" id="bet-stake-input" class="input-dark" placeholder="Сумма ставки">
+                <button id="place-bet-button" class="btn-green">Сделать ставку</button>
+            </div>
+            <button class="close-modal-btn" onclick="closeBetModal()">✖</button>
+        </div>
+    </div>
+
+    <div id="animation-overlay" class="modal-overlay hidden">
+        <div id="skip-animation-prompt" class="skip-prompt hidden">НАЖМИТЕ ЧТОБЫ ПРОПУСТИТЬ</div>
+        <video id="pack-animation-video" playsinline></video>
+    </div>
+
+    <div id="squad-management-overlay" class="modal-overlay hidden">
+        <div class="squad-management-content">
+            <div class="squad-management-bg"></div>
+            <h2>Управление Составом</h2>
+            <div class="squad-formation">
+                <div class="formation-row" id="formation-forwards">
+                </div>
+                <div class="formation-row" id="formation-keeper">
+                </div>
+            </div>
+            <h3>Мой Клуб</h3>
+            <div class="club-players-list" id="club-players-container">
+            </div>
+            <button class="close-modal-btn" onclick="closeSquadManagement()">✖</button>
+        </div>
+    </div>
+
+    <div id="notification-box" class="notification-box">
+        <span id="notification-message"></span>
+    </div>
+
+    <audio id="background-music"></audio>
+
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

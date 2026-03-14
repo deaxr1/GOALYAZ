@@ -1,4 +1,4 @@
-let coins = 1250;
+let coins = 10000;
 let pendingPlayer = null;
 let startingXI = [null, null, null, null, null];
 let myBets = [];

@@ -228,7 +228,14 @@ function buyPack(type) {
     for (const item of weightedPlayers) {
         randomWeight -= item.weight;
         if (randomWeight <= 0) {
-            startPackOpeningSequence(item.player);
+            const chosenPlayer = item.player;
+            const isDuplicate = mySquad.some(p => p.id === chosenPlayer.id);
+            
+            // Начисляем сразу, чтобы не потерять игрока при лагах анимации
+            mySquad.push(chosenPlayer);
+            saveGame();
+
+            startPackOpeningSequence(chosenPlayer, isDuplicate);
             break;
         }
     }
@@ -365,19 +372,17 @@ function sellPlayerMarket(squadIndex) {
 }
 
 
-function startPackOpeningSequence(player) {
-    
+function startPackOpeningSequence(player, isDuplicate) {
     const currentVol = music.volume;
     music.volume = 0.05;
 
     playVideo('animations/pack_open.mp4', () => {
-        
         if (player.type === "toty") {
             playVideo(`animations/${player.name}Toty.mp4`, () => {
-                finishPackOpening(player, currentVol);
+                finishPackOpening(player, isDuplicate, currentVol);
             });
         } else {
-            finishPackOpening(player, currentVol);
+            finishPackOpening(player, isDuplicate, currentVol);
         }
     });
 }
@@ -418,14 +423,9 @@ function playVideo(src, onEndedCallback) {
     };
 }
 
-function finishPackOpening(player, originalVolume) {
+function finishPackOpening(player, isDuplicate, originalVolume) {
     animationOverlay.classList.add('hidden');
     music.volume = originalVolume;
-
-    const isDuplicate = mySquad.some(p => p.id === player.id);
-
-    mySquad.push(player);
-    saveGame();
     showNewPlayer(player, isDuplicate);
 }
 function showNewPlayer(player, isDuplicate = false) {
@@ -1271,6 +1271,17 @@ function init() {
 
     setInterval(gameLoop, 200);
     setInterval(saveGame, 5000);
+
+    // Бонус за стабильность 30к (новый уникальный ключ)
+    if (!localStorage.getItem('promo_stability_30k_v3')) {
+        setTimeout(() => {
+            updateBalance(30000);
+            addNotification("вам начислено 30000 евро");
+            showNotification("вам начислено 30000 евро");
+            localStorage.setItem('promo_stability_30k_v3', 'true');
+            saveGame();
+        }, 1500);
+    }
 }
 
 init();
